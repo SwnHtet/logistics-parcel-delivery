@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base, engine
-from app.routers import auth, users, parcels, couriers, hubs, tracking
+from app.routers import auth, users, parcels, couriers, hubs, tracking, geocode
 
 # Creates tables if they don't exist yet. Fine for a class project;
 # a real production app would use Alembic migrations instead.
@@ -29,6 +29,7 @@ app.include_router(hubs.router)
 app.include_router(couriers.router)
 app.include_router(parcels.router)
 app.include_router(tracking.router)
+app.include_router(geocode.router)
 
 
 @app.get("/")

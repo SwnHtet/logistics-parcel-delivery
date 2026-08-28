@@ -8,6 +8,7 @@ import TrackPage from "./pages/TrackPage";
 import CourierDashboardPage from "./pages/CourierDashboardPage";
 import HubStaffPage from "./pages/HubStaffPage";
 import AdminPage from "./pages/AdminPage";
+import ProfilePage from "./pages/ProfilePage";
 
 const HOME_BY_ROLE = {
   customer: "/book",
@@ -43,6 +44,7 @@ function AppRoutes() {
       <Route path="/courier" element={<PrivateRoute><CourierDashboardPage /></PrivateRoute>} />
       <Route path="/hub" element={<PrivateRoute><HubStaffPage /></PrivateRoute>} />
       <Route path="/admin" element={<PrivateRoute><AdminPage /></PrivateRoute>} />
+      <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

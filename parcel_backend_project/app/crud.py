@@ -39,6 +39,15 @@ def get_user_by_email(db: Session, email: str) -> Optional[models.User]:
     return db.query(models.User).filter(models.User.email == email).first()
 
 
+def update_profile_address(db: Session, user: models.User, payload: schemas.ProfileAddressUpdate) -> models.User:
+    user.saved_address = payload.saved_address
+    user.saved_address_lat = payload.saved_address_lat
+    user.saved_address_lng = payload.saved_address_lng
+    db.commit()
+    db.refresh(user)
+    return user
+
+
 # ---------- Hubs ----------
 
 def create_hub(db: Session, hub_in: schemas.HubCreate) -> models.Hub:

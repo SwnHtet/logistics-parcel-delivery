@@ -1,43 +1,57 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../components/Layout";
+import AddressField from "../components/AddressField";
 import { api } from "../api/client";
 
-const DEFAULTS = {
-  receiver_name: "",
-  receiver_phone: "",
-  receiver_address: "",
-  pickup_lat: "13.7563",
-  pickup_lng: "100.5018",
-  dropoff_lat: "14.0208",
-  dropoff_lng: "100.5250",
-};
-
 export default function BookParcelPage() {
-  const [form, setForm] = useState(DEFAULTS);
+  const [receiverName, setReceiverName] = useState("");
+  const [receiverPhone, setReceiverPhone] = useState("");
+  const [receiverAddress, setReceiverAddress] = useState("");
+  const [pickup, setPickup] = useState({ address: "", lat: null, lng: null });
+  const [dropoff, setDropoff] = useState({ address: "", lat: null, lng: null });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(null);
   const [busy, setBusy] = useState(false);
   const navigate = useNavigate();
 
-  const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+  const resetForm = () => {
+    setReceiverName("");
+    setReceiverPhone("");
+    setReceiverAddress("");
+    setPickup({ address: "", lat: null, lng: null });
+    setDropoff({ address: "", lat: null, lng: null });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess(null);
+
+    if (pickup.lat == null || pickup.lng == null) {
+      setError("Please confirm the pickup address using \"Use my location\" or by selecting a suggestion.");
+      return;
+    }
+    if (dropoff.lat == null || dropoff.lng == null) {
+      setError("Please confirm the drop-off address by selecting a suggestion from the search results.");
+      return;
+    }
+
     setBusy(true);
     try {
-      const payload = {
-        ...form,
-        pickup_lat: parseFloat(form.pickup_lat),
-        pickup_lng: parseFloat(form.pickup_lng),
-        dropoff_lat: parseFloat(form.dropoff_lat),
-        dropoff_lng: parseFloat(form.dropoff_lng),
-      };
-      const parcel = await api.bookParcel(payload);
+      const parcel = await api.bookParcel({
+        receiver_name: receiverName,
+        receiver_phone: receiverPhone,
+        receiver_address: receiverAddress,
+        pickup_address: pickup.address,
+        pickup_lat: pickup.lat,
+        pickup_lng: pickup.lng,
+        dropoff_address: dropoff.address,
+        dropoff_lat: dropoff.lat,
+        dropoff_lng: dropoff.lng,
+      });
       setSuccess(parcel);
-      setForm(DEFAULTS);
+      resetForm();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -49,7 +63,7 @@ export default function BookParcelPage() {
     <Layout>
       <h1 className="page-title">Book a Parcel</h1>
       <p className="page-subtitle">
-        Coordinates default to Bangkok → Pathum Thani so you can submit immediately for testing.
+        Share your location or type an address — pick a suggestion to confirm the exact spot.
       </p>
 
       {error && <div className="error-banner">{error}</div>}
@@ -71,41 +85,28 @@ export default function BookParcelPage() {
           <div className="grid-2">
             <div className="field">
               <label>Receiver name</label>
-              <input value={form.receiver_name} onChange={update("receiver_name")} required />
+              <input value={receiverName} onChange={(e) => setReceiverName(e.target.value)} required />
             </div>
             <div className="field">
               <label>Receiver phone</label>
-              <input value={form.receiver_phone} onChange={update("receiver_phone")} required />
+              <input value={receiverPhone} onChange={(e) => setReceiverPhone(e.target.value)} required />
             </div>
           </div>
           <div className="field">
-            <label>Receiver address</label>
-            <input value={form.receiver_address} onChange={update("receiver_address")} required />
+            <label>Receiver's delivery address</label>
+            <input
+              value={receiverAddress}
+              onChange={(e) => setReceiverAddress(e.target.value)}
+              placeholder="e.g. Apartment 4B, 123 Main St"
+              required
+            />
           </div>
 
-          <h2 className="card-title" style={{ marginTop: 22 }}>Pickup & drop-off coordinates</h2>
-          <div className="grid-2">
-            <div className="field">
-              <label>Pickup latitude</label>
-              <input value={form.pickup_lat} onChange={update("pickup_lat")} required />
-            </div>
-            <div className="field">
-              <label>Pickup longitude</label>
-              <input value={form.pickup_lng} onChange={update("pickup_lng")} required />
-            </div>
-          </div>
-          <div className="grid-2">
-            <div className="field">
-              <label>Drop-off latitude</label>
-              <input value={form.dropoff_lat} onChange={update("dropoff_lat")} required />
-            </div>
-            <div className="field">
-              <label>Drop-off longitude</label>
-              <input value={form.dropoff_lng} onChange={update("dropoff_lng")} required />
-            </div>
-          </div>
+          <h2 className="card-title" style={{ marginTop: 22 }}>Pickup & drop-off</h2>
+          <AddressField label="Pickup address" value={pickup} onChange={setPickup} />
+          <AddressField label="Drop-off address" value={dropoff} onChange={setDropoff} />
 
-          <button className="btn btn-primary" disabled={busy}>
+          <button className="btn btn-primary" disabled={busy} style={{ marginTop: 4 }}>
             {busy ? "Booking..." : "Book Parcel"}
           </button>
         </form>

@@ -71,9 +71,9 @@ export default function ParcelDetailPage() {
         <div className="card">
           <h2 className="card-title">Delivery details</h2>
           <p><strong>Receiver:</strong> {parcel.receiver_name} · {parcel.receiver_phone}</p>
-          <p><strong>Address:</strong> {parcel.receiver_address}</p>
-          <p><strong>Pickup:</strong> {parcel.pickup_lat}, {parcel.pickup_lng}</p>
-          <p><strong>Drop-off:</strong> {parcel.dropoff_lat}, {parcel.dropoff_lng}</p>
+          <p><strong>Delivery address:</strong> {parcel.receiver_address}</p>
+          <p><strong>Pickup:</strong> {parcel.pickup_address}</p>
+          <p><strong>Drop-off:</strong> {parcel.dropoff_address}</p>
           <p><strong>Assigned courier:</strong> {parcel.assigned_courier_id ? `#${parcel.assigned_courier_id}` : "Not yet assigned"}</p>
         </div>
 

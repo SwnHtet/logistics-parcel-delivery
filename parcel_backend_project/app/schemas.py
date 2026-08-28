@@ -45,6 +45,15 @@ class UserOut(BaseModel):
     phone: Optional[str] = None
     role: UserRole
     created_at: datetime
+    saved_address: Optional[str] = None
+    saved_address_lat: Optional[float] = None
+    saved_address_lng: Optional[float] = None
+
+
+class ProfileAddressUpdate(BaseModel):
+    saved_address: str
+    saved_address_lat: float
+    saved_address_lng: float
 
 
 class Token(BaseModel):
@@ -104,8 +113,10 @@ class ParcelCreate(BaseModel):
     receiver_name: str
     receiver_phone: str
     receiver_address: str
+    pickup_address: str
     pickup_lat: float
     pickup_lng: float
+    dropoff_address: str
     dropoff_lat: float
     dropoff_lng: float
 
@@ -137,8 +148,10 @@ class ParcelOut(BaseModel):
     receiver_name: str
     receiver_phone: str
     receiver_address: str
+    pickup_address: str
     pickup_lat: float
     pickup_lng: float
+    dropoff_address: str
     dropoff_lat: float
     dropoff_lng: float
     current_status: ParcelStatus

@@ -61,6 +61,12 @@ class User(Base):
     role = Column(Enum(UserRole), nullable=False, default=UserRole.customer)
     created_at = Column(DateTime, default=datetime.utcnow)
 
+    # Saved default address (set from the Profile page) — lets a customer
+    # reuse "home" or "work" as pickup without re-entering it every time.
+    saved_address = Column(String(255), nullable=True)
+    saved_address_lat = Column(Float, nullable=True)
+    saved_address_lng = Column(Float, nullable=True)
+
     courier_profile = relationship("Courier", back_populates="user", uselist=False)
     sent_parcels = relationship("Parcel", back_populates="sender", foreign_keys="Parcel.sender_id")
 
@@ -102,8 +108,10 @@ class Parcel(Base):
     receiver_phone = Column(String(30), nullable=False)
     receiver_address = Column(String(255), nullable=False)
 
+    pickup_address = Column(String(255), nullable=False)
     pickup_lat = Column(Float, nullable=False)
     pickup_lng = Column(Float, nullable=False)
+    dropoff_address = Column(String(255), nullable=False)
     dropoff_lat = Column(Float, nullable=False)
     dropoff_lng = Column(Float, nullable=False)
 

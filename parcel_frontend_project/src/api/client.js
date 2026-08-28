@@ -63,6 +63,12 @@ export const api = {
 
   listUsers: () => request("/users/"),
   createStaff: (payload) => request("/auth/staff", { method: "POST", body: payload }),
+  updateMyAddress: (payload) => request("/users/me/address", { method: "PATCH", body: payload }),
+
+  geocodeSearch: (query) =>
+    request(`/geocode/search?q=${encodeURIComponent(query)}`, { auth: false }),
+  geocodeReverse: (lat, lng) =>
+    request(`/geocode/reverse?lat=${lat}&lng=${lng}`, { auth: false }),
 };
 
 export function wsUrl(parcelId) {
